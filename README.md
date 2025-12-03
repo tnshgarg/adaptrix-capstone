@@ -1,141 +1,311 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# Adaptrix - LoRa Adapter Marketplace
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+A modern web platform for sharing and discovering LoRa (Low-Rank Adaptation) adapters for large language models. Built as a college capstone project.
 
-## ✨ Technology Stack
+## 📋 Project Overview
 
-This scaffold provides a robust foundation built with:
+Adaptrix is a full-stack MERN application that allows users to upload, share, download, and review LoRa adapters. The platform features user authentication, file management, social interactions (reviews and stars), and comprehensive CRUD operations.
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+## ✨ Key Features
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+### User Management
+- **Authentication**: Secure JWT-based authentication with Bcrypt password hashing
+- **User Registration & Login**: Complete signup and signin flows
+- **Protected Routes**: Dashboard and user-specific features require authentication
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+### Adapter Management (CRUD)
+- **Create**: Upload new adapters with metadata (name, description, category, tags, file)
+- **Read**: Browse adapters with pagination, filtering, and search
+- **Update**: Modify adapter details (backend ready)
+- **Delete**: Remove your adapters
+- **File Upload**: Integration with Cloudinary for file storage
+- **Download Tracking**: Automatic download count increments
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Axios** - Promise-based HTTP client
+### Review System (CRUD)
+- **Create**: Add reviews with star ratings (1-5) and comments
+- **Read**: View all reviews for each adapter
+- **Update**: Edit your own reviews
+- **Delete**: Remove your reviews
+- **Ownership Control**: Users can only modify their own reviews
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation Node.js and TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+### Social Features
+- **Star/Unstar**: Mark favorite adapters
+- **Star Count**: Track popularity
+- **Download Count**: Monitor adapter usage
+- **Author Attribution**: See who created each adapter
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+### Search & Discovery
+- **Pagination**: 10-12 items per page on all listing pages
+- **Category Filtering**: Filter by Development, Healthcare, Business, etc.
+- **Search**: Find adapters by name, description, or tags
+- **Sorting**: Sort by popularity, stars, recent, or name
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### Platform Stats
+- **Real-time Aggregation**: Total adapters, downloads, and users
+- **User Dashboard**: Personal stats for your adapters
+- **Performance Metrics**: Downloads and stars per adapter
 
-## 🎯 Why This Scaffold?
+## 🛠️ Technology Stack
 
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
+### Frontend
+- **Next.js 15**: React framework with App Router
+- **React 19**: UI library
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+- **shadcn/ui**: Component library built on Radix UI
+- **Axios**: HTTP client
 
-## 🚀 Quick Start
+### Backend
+- **Node.js**: Runtime environment
+- **Express.js**: Web framework
+- **MongoDB**: NoSQL database
+- **Mongoose**: ODM for MongoDB
+- **JWT**: Authentication tokens
+- **Bcrypt**: Password hashing
+- **Cloudinary**: File storage
 
+### Key Libraries
+- **lucide-react**: Icon library
+- **date-fns**: Date formatting
+- **class-variance-authority**: Component variants
+- **clsx & tailwind-merge**: Conditional styling
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- MongoDB database
+- Cloudinary account (for file uploads)
+
+### Installation
+
+1. **Clone the repository**
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+git clone <repository-url>
+cd adaptrix-capstone
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
+2. **Install frontend dependencies**
+```bash
+npm install
+```
 
-## 🤖 Powered by Z.ai
+3. **Install backend dependencies**
+```bash
+cd backend
+npm install
+```
 
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
+4. **Configure environment variables**
 
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
+Create `backend/.env`:
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
+5. **Seed the database (optional)**
+```bash
+cd backend
+node seed.js
+```
+
+This creates test users, adapters, and reviews. Test credentials:
+- Email: `john@example.com`
+- Password: `password123`
+
+### Running the Application
+
+1. **Start the backend server**
+```bash
+cd backend
+nodemon server.js
+```
+Server runs on `http://localhost:5001`
+
+2. **Start the frontend (in a new terminal)**
+```bash
+npm run dev
+```
+App runs on `http://localhost:3000`
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
+adaptrix-capstone/
+├── backend/
+│   ├── models/           # Mongoose schemas (User, Adapter, Review, Star)
+│   ├── routes/           # API endpoints
+│   │   ├── auth.js       # Authentication routes
+│   │   ├── adapters.js   # Adapter CRUD
+│   │   ├── reviews.js    # Review CRUD
+│   │   ├── stars.js      # Star/unstar functionality
+│   │   ├── downloads.js  # Download tracking
+│   │   ├── platform.js   # Platform statistics
+│   │   └── dashboard.js  # User dashboard stats
+│   ├── middleware/       # Auth middleware
+│   ├── config/           # Database configuration
+│   ├── seed.js           # Database seeder
+│   └── server.js         # Express app entry point
+│
+├── src/
+│   ├── app/              # Next.js pages
+│   │   ├── page.tsx      # Home/marketplace
+│   │   ├── auth/         # Login/signup pages
+│   │   └── dashboard/    # Protected dashboard pages
+│   │       ├── page.tsx              # Dashboard home
+│   │       ├── adapters/             # My adapters list
+│   │       │   └── [id]/page.tsx     # Adapter details
+│   │       └── create/               # Create adapter
+│   ├── components/       # React components
+│   │   ├── ui/           # shadcn/ui components
+│   │   ├── dashboard-nav.tsx         # Navigation
+│   │   ├── adapter-form.tsx          # Create/edit form
+│   │   └── review-section.tsx        # Reviews component
+│   ├── contexts/         # React contexts (AuthContext)
+│   ├── lib/              # Utilities
+│   │   ├── api.ts        # API client
+│   │   └── utils.ts      # Helper functions
+│   └── hooks/            # Custom hooks
 ```
 
-## 🎨 Available Features & Components
+## 🔑 Core Functionality
 
-This scaffold includes a comprehensive set of modern web development tools:
+### Authentication Flow
+1. User registers with name, email, password
+2. Password is hashed with bcrypt
+3. JWT token generated on login
+4. Token stored in localStorage
+5. Protected routes verify token via middleware
 
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
+### Adapter Upload Flow
+1. User fills out adapter form
+2. File uploaded to Cloudinary
+3. Metadata saved to MongoDB
+4. Adapter appears in marketplace and user's dashboard
 
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
+### Review System
+1. Users view adapter details
+2. Authenticated users can add/edit/delete reviews
+3. Reviews include 1-5 star rating and comment
+4. Only review owner can modify/delete
 
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
+### Download Tracking
+1. User clicks download on adapter details
+2. API increments download count
+3. File download initiated
+4. Stats updated in real-time
 
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Axios + TanStack Query
-- **State Management**: Simple and scalable with Zustand
+## 🎯 API Endpoints
 
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user
 
-## 🤝 Get Started with Z.ai
+### Adapters
+- `GET /api/adapters` - List adapters (with pagination, filters)
+- `GET /api/adapters/:id` - Get adapter details
+- `POST /api/adapters` - Create adapter (auth required)
+- `PUT /api/adapters/:id` - Update adapter (auth required)
+- `DELETE /api/adapters/:id` - Delete adapter (auth required)
+- `POST /api/adapters/upload` - Upload file to Cloudinary
 
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+### Reviews
+- `GET /api/reviews/adapter/:adapterId` - Get reviews for adapter
+- `POST /api/reviews` - Create review (auth required)
+- `PUT /api/reviews/:id` - Update review (auth required)
+- `DELETE /api/reviews/:id` - Delete review (auth required)
+
+### Stars
+- `POST /api/stars/:adapterId` - Star adapter (auth required)
+- `DELETE /api/stars/:adapterId` - Unstar adapter (auth required)
+- `GET /api/stars/check/:adapterId` - Check if starred (auth required)
+
+### Platform
+- `GET /api/platform/stats` - Get platform statistics
+- `POST /api/downloads/:id/download` - Increment download count
+
+## 🎨 Features Implemented
+
+- ✅ JWT Authentication with Bcrypt
+- ✅ Adapter CRUD operations
+- ✅ Review CRUD operations
+- ✅ Star/Unstar functionality
+- ✅ File upload with Cloudinary
+- ✅ Download tracking
+- ✅ Pagination (home page and My Adapters)
+- ✅ Search and filtering
+- ✅ Real platform statistics
+- ✅ User dashboard
+- ✅ Responsive design
+- ✅ Protected routes
+
+## 📝 Database Models
+
+### User
+- name, email, password (hashed)
+- avatar, bio
+- timestamps
+
+### Adapter
+- name, slug, description
+- category, tags, version
+- author (ref: User)
+- downloads, starCount
+- fileUrl, fileName, cloudinaryId
+- compatibleModels, repository, readme
+- timestamps
+
+### Review
+- user (ref: User)
+- adapter (ref: Adapter)
+- rating (1-5), comment
+- timestamps
+
+### Star
+- user (ref: User)
+- adapter (ref: Adapter)
+- timestamp
+
+## 🚀 Deployment Considerations
+
+1. **Environment Variables**: Ensure all env vars are set
+2. **MongoDB**: Use MongoDB Atlas for production
+3. **Cloudinary**: Configure upload presets
+4. **JWT Secret**: Use strong, unique secret in production
+5. **Build**: Run `npm run build` before deployment
+6. **Port Configuration**: Backend on 5001, Frontend on 3000
+
+## 👨‍💻 Development
+
+### Available Scripts
+
+**Frontend:**
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+
+**Backend:**
+- `nodemon server.js` - Start with auto-reload
+- `node server.js` - Start production server
+- `node seed.js` - Seed database with test data
+
+## 📚 Learning Outcomes
+
+This project demonstrates:
+- Full-stack MERN development
+- RESTful API design
+- Authentication & authorization
+- File upload handling
+- Database relationships
+- State management
+- Responsive UI design
+- Component architecture
 
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+**College Capstone Project** | Built with Next.js, Express, MongoDB | 2024
