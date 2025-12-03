@@ -38,7 +38,7 @@ const compatibleModels = [
   'Custom'
 ]
 
-interface AdapterFormData {
+export interface AdapterFormData {
   name: string
   slug: string
   description: string
@@ -50,34 +50,46 @@ interface AdapterFormData {
   repository: string
   readme: string
   isPublic: boolean
+  // Fields for uploaded file, potentially coming from initialData
+  fileName?: string
+  fileUrl?: string
+  cloudinaryId?: string
+  size?: number // Raw size in bytes
 }
 
-export function AdapterForm() {
+export function AdapterForm({ initialData, adapterId }: { initialData?: AdapterFormData, adapterId?: string }) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [newTag, setNewTag] = useState('')
-  const [uploadedFile, setUploadedFile] = useState<{fileName: string, fileUrl: string, cloudinaryId: string, size: number} | null>(null)
+  const [uploadedFile, setUploadedFile] = useState<{fileName: string, fileUrl: string, cloudinaryId: string, size: number} | null>(
+    initialData && initialData.fileUrl ? {
+      fileName: initialData.fileName || '',
+      fileUrl: initialData.fileUrl || '',
+      cloudinaryId: initialData.cloudinaryId || '',
+      size: initialData.size || 0 // We might not have size in initialData, or need to parse it
+    } : null
+  )
   const [formData, setFormData] = useState<AdapterFormData>({
-    name: '',
-    slug: '',
-    description: '',
-    category: '',
-    tags: [],
-    compatibleModels: [],
-    version: '1.0.0',
-    license: 'MIT',
-    repository: '',
-    readme: '',
-    isPublic: true
+    name: initialData?.name || '',
+    slug: initialData?.slug || '',
+    description: initialData?.description || '',
+    category: initialData?.category || '',
+    tags: initialData?.tags || [],
+    compatibleModels: initialData?.compatibleModels || [],
+    version: initialData?.version || '1.0.0',
+    license: initialData?.license || 'MIT',
+    repository: initialData?.repository || '',
+    readme: initialData?.readme || '',
+    isPublic: initialData?.isPublic ?? true
   })
 
   const handleInputChange = (field: keyof AdapterFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     
-
-    if (field === 'name') {
+    // Only auto-generate slug in create mode
+    if (field === 'name' && !initialData) {
       const slug = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -120,7 +132,7 @@ export function AdapterForm() {
     setUploadProgress(0)
 
     try {
-
+      // Simulate progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
@@ -136,7 +148,7 @@ export function AdapterForm() {
       clearInterval(progressInterval)
       setUploadProgress(100)
 
-
+      // Store file details
       setUploadedFile({
         fileName: data.fileName,
         fileUrl: data.fileUrl,
@@ -173,25 +185,35 @@ export function AdapterForm() {
     setIsLoading(true)
 
     try {
-
+      // Prepare data for API
       const adapterData = {
         ...formData,
         fileUrl: uploadedFile?.fileUrl,
         cloudinaryId: uploadedFile?.cloudinaryId,
         fileName: uploadedFile?.fileName,
-        size: uploadedFile ? `${(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB` : undefined
+        size: uploadedFile?.size // Pass raw size to backend
       }
 
-      const data = await apiClient.createAdapter(adapterData)
-      toast({
-        title: "Adapter created successfully",
-        description: "Your adapter has been published"
-      })
+      if (initialData && adapterId) {
+         await apiClient.updateAdapter(adapterId, adapterData)
+         toast({
+          title: "Adapter updated successfully",
+          description: "Your adapter changes have been saved"
+        })
+      } else {
+        await apiClient.createAdapter(adapterData)
+        toast({
+          title: "Adapter created successfully",
+          description: "Your adapter has been published"
+        })
+      }
+      
       router.push('/dashboard/adapters')
+      router.refresh()
     } catch (error) {
       toast({
-        title: "Creation failed",
-        description: error instanceof Error ? error.message : "Failed to create adapter",
+        title: initialData ? "Update failed" : "Creation failed",
+        description: error instanceof Error ? error.message : "Failed to save adapter",
         variant: "destructive"
       })
     } finally {
@@ -231,6 +253,7 @@ export function AdapterForm() {
                 onChange={(e) => handleInputChange('slug', e.target.value)}
                 placeholder="code-enhancer-lora"
                 required
+                disabled={!!initialData} // Disable slug editing for existing adapters
               />
             </div>
           </div>
@@ -459,7 +482,7 @@ Specify the license..."
                       {uploadedFile.fileName}
                     </p>
                     <p className="text-xs text-green-700 mt-1">
-                      {(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB • Uploaded to cloud storage
+                      {uploadedFile.size ? `${(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB` : 'Unknown size'} • Uploaded to cloud storage
                     </p>
                   </div>
                 </div>
@@ -519,12 +542,12 @@ Specify the license..."
         >
           {isLoading ? (
             <>
-              <span className="mr-2">Creating...</span>
+              <span className="mr-2">{initialData ? 'Updating...' : 'Creating...'}</span>
             </>
           ) : (
             <>
               <Save className="w-4 h-4 mr-2" />
-              {uploadedFile ? 'Create Adapter' : 'Upload File First'}
+              {initialData ? 'Update Adapter' : (uploadedFile ? 'Create Adapter' : 'Upload File First')}
             </>
           )}
         </Button>

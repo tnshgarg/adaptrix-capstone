@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import { DashboardNav } from '@/components/dashboard-nav'
 import { ReviewSection } from '@/components/review-section'
 import apiClient from '@/lib/api'
@@ -38,6 +39,7 @@ interface Adapter {
 }
 
 export default function AdapterDetailsPage() {
+  const { user } = useAuth()
   const params = useParams()
   const router = useRouter()
   const [adapter, setAdapter] = useState<Adapter | null>(null)
@@ -214,6 +216,13 @@ export default function AdapterDetailsPage() {
                     Repository
                   </Button>
                 </a>
+              )}
+              {user && adapter.author && user.id === adapter.author.id && (
+                <Link href={`/dashboard/adapters/${adapter.id}/edit`}>
+                  <Button variant="secondary" className="w-full">
+                    Edit Adapter
+                  </Button>
+                </Link>
               )}
             </div>
           </div>
