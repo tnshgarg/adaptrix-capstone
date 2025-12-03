@@ -77,9 +77,10 @@ export function ReviewSection({ adapterId }: ReviewSectionProps) {
       setEditingId(null)
       fetchReviews()
     } catch (error: any) {
+      const errorMessage = error?.message || "Failed to post review"
       toast({
         title: "Error",
-        description: error.message || "Failed to post review",
+        description: errorMessage,
         variant: "destructive"
       })
     } finally {

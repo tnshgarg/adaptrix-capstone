@@ -33,6 +33,8 @@ interface Adapter {
   model: string[]
   repository?: string
   readme?: string
+  fileUrl?: string
+  fileName?: string
 }
 
 export default function AdapterDetailsPage() {
@@ -40,10 +42,12 @@ export default function AdapterDetailsPage() {
   const router = useRouter()
   const [adapter, setAdapter] = useState<Adapter | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isStarred, setIsStarred] = useState(false)
 
   useEffect(() => {
     if (params.id) {
       fetchAdapter(params.id as string)
+      checkIfStarred(params.id as string)
     }
   }, [params.id])
 
@@ -61,6 +65,95 @@ export default function AdapterDetailsPage() {
       router.push('/dashboard/adapters')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDownload = async () => {
+    if (!adapter) return
+
+    if (!adapter.fileUrl) {
+      toast({
+        title: "Download not available",
+        description: "This adapter doesn't have a file uploaded",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      // Increment download count
+      await apiClient.incrementDownload(adapter.id)
+
+      // Trigger file download
+      const link = document.createElement('a')
+      link.href = adapter.fileUrl
+      link.download = adapter.fileName || `${adapter.slug}.safetensors`
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      toast({
+        title: "Download started",
+        description: `${adapter.name} is being downloaded`
+      })
+
+      // Update local adapter state
+      setAdapter({
+        ...adapter,
+        downloads: adapter.downloads + 1
+      })
+    } catch (error) {
+      toast({
+        title: "Download failed",
+        description: "Failed to download the adapter file",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const checkIfStarred = async (id: string) => {
+    try {
+      const data = await apiClient.checkStar(id)
+      setIsStarred(data.isStarred)
+    } catch (error) {
+      // User might not be authenticated, ignore
+    }
+  }
+
+  const handleStar = async () => {
+    if (!adapter) return
+
+    try {
+      if (isStarred) {
+        await apiClient.unstarAdapter(adapter.id)
+        setIsStarred(false)
+        setAdapter({
+          ...adapter,
+          starCount: adapter.starCount - 1
+        })
+        toast({
+          title: "Unstarred",
+          description: "Removed from your starred adapters"
+        })
+      } else {
+        await apiClient.starAdapter(adapter.id)
+        setIsStarred(true)
+        setAdapter({
+          ...adapter,
+          starCount: adapter.starCount + 1
+        })
+        toast({
+          title: "Starred",
+          description: "Added to your starred adapters"
+        })
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to star adapter",
+        variant: "destructive"
+      })
     }
   }
 
@@ -106,9 +199,13 @@ export default function AdapterDetailsPage() {
               <p className="text-lg text-gray-700 max-w-3xl">{adapter.description}</p>
             </div>
             <div className="flex flex-col gap-2">
-              <Button>
+              <Button onClick={handleDownload}>
                 <Download className="w-4 h-4 mr-2" />
                 Download Model
+              </Button>
+              <Button onClick={handleStar} variant={isStarred ? "default" : "outline"}>
+                <Star className={`w-4 h-4 mr-2 ${isStarred ? 'fill-current' : ''}`} />
+                {isStarred ? 'Starred' : 'Star'}
               </Button>
               {adapter.repository && (
                 <a href={adapter.repository} target="_blank" rel="noopener noreferrer">

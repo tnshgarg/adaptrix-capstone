@@ -140,15 +140,36 @@ export default function AdaptrixMarketplace() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('popular')
-  const [adapters, setAdapters] = useState<LoRaAdapter[]>([])
-  const [filteredAdapters, setFilteredAdapters] = useState<LoRaAdapter[]>([])
-  const [loading, setLoading] = useState(true)
-  const [copiedCommand, setCopiedCommand] = useState<string | null>(null)
-  const router = useRouter()
+  const [adapters, setAdapters] = useState<LoRaAdapter[]>([]);
+  const [filteredAdapters, setFilteredAdapters] = useState<LoRaAdapter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalAdapters, setTotalAdapters] = useState(0);
+  const [platformStats, setPlatformStats] = useState({ totalAdapters: 0, totalDownloads: 0, totalDevelopers: 0 });
+  const router = useRouter();
+  const itemsPerPage = 12;
 
   useEffect(() => {
     fetchAdapters()
-  }, [selectedCategory, sortBy])
+  }, [selectedCategory, sortBy, currentPage]);
+
+  useEffect(() => {
+    // Fetch platform stats
+    const fetchStats = async () => {
+      try {
+        const stats = await apiClient.getPlatformStats();
+        setPlatformStats({
+          totalAdapters: stats.totalAdapters || 0,
+          totalDownloads: stats.totalDownloads || 0,
+          totalDevelopers: stats.totalUsers || 0
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    fetchStats();
+  }, [])
 
   useEffect(() => {
     filterAndSortAdapters()
@@ -156,19 +177,22 @@ export default function AdaptrixMarketplace() {
 
   const fetchAdapters = async () => {
     try {
-      setLoading(true)
-      const params: any = { sort: sortBy, limit: 12 }
+      setLoading(true);
+      const params: any = { sort: sortBy, limit: itemsPerPage, page: currentPage };
       if (selectedCategory !== 'all') {
-        params.category = selectedCategory
+        params.category = selectedCategory;
       }
-      const data = await apiClient.getAdapters(params)
-      setAdapters(data.adapters || [])
+      const data = await apiClient.getAdapters(params);
+      setAdapters(data.adapters || []);
+      if (data.pagination) {
+        setTotalPages(data.pagination.totalPages);
+        setTotalAdapters(data.pagination.total);
+      }
     } catch (error) {
-      console.error('Error fetching adapters:', error)
-      // Fallback to mock data if API fails
-      setAdapters(mockAdapters)
+      console.error('Error fetching adapters:', error);
+      setAdapters([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -198,66 +222,6 @@ export default function AdaptrixMarketplace() {
     })
 
     setFilteredAdapters(filtered)
-  }
-
-  const handleCopyCommand = async (command: string) => {
-    try {
-      await navigator.clipboard.writeText(command)
-      setCopiedCommand(command)
-      toast({
-        title: "Command copied!",
-        description: "Installation command copied to clipboard",
-      })
-      setTimeout(() => setCopiedCommand(null), 2000)
-    } catch (err) {
-      toast({
-        title: "Failed to copy",
-        description: "Please copy the command manually",
-        variant: "destructive"
-      })
-    }
-  }
-
-  const handleInstall = async (adapter: LoRaAdapter) => {
-    // Check if adapter has a fileUrl
-    if (!adapter.fileUrl) {
-      toast({
-        title: "Download not available",
-        description: "This adapter doesn't have a file URL",
-        variant: "destructive"
-      })
-      return
-    }
-
-    toast({
-      title: "Starting download...",
-      description: `Downloading ${adapter.name}...`,
-    })
-
-    try {
-      // Create a temporary anchor element to trigger download
-      const link = document.createElement('a')
-      link.href = adapter.fileUrl
-      link.download = adapter.fileName || `${adapter.slug}.safetensors`
-      link.target = '_blank'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      // Small delay before showing success message
-      setTimeout(() => {
-        toast({
-          title: "Download started!",
-          description: `${adapter.name} is being downloaded`,
-        })
-      }, 500)
-    } catch (error) {
-      toast({
-        title: "Download failed",
-        description: "Failed to download the adapter file",
-        variant: "destructive"
-      })
-    }
   }
 
   return (
@@ -316,22 +280,18 @@ export default function AdaptrixMarketplace() {
           </p>
           
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-violet-600">1,234</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Adapters</div>
+              <div className="text-3xl font-bold text-violet-600">{platformStats.totalAdapters}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Total Adapters</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-violet-600">45.2K</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Downloads</div>
+              <div className="text-3xl font-bold text-violet-600">{platformStats.totalDownloads.toLocaleString()}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Total Downloads</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-violet-600">892</div>
+              <div className="text-3xl font-bold text-violet-600">{platformStats.totalDevelopers}</div>
               <div className="text-sm text-slate-600 dark:text-slate-400">Developers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-violet-600">12</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Models</div>
             </div>
           </div>
 
@@ -409,11 +369,12 @@ export default function AdaptrixMarketplace() {
             ))
           ) : (
             filteredAdapters.map((adapter) => (
-              <Card key={adapter.id} className="hover:shadow-lg transition-shadow duration-200">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg mb-2">{adapter.name}</CardTitle>
+              <Link key={adapter.id} href={`/dashboard/adapters/${adapter.id}`}>
+                <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg mb-2 hover:text-violet-600 transition-colors">{adapter.name}</CardTitle>
                       <CardDescription className="text-sm">
                         by {typeof adapter.author === 'string' ? adapter.author : adapter.author?.name || 'Unknown'} • v{adapter.version}
                       </CardDescription>
@@ -460,30 +421,13 @@ export default function AdaptrixMarketplace() {
                     </code>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      className="flex-1"
-                      onClick={() => handleInstall(adapter)}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Install
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleCopyCommand(adapter.installCommand)}
-                    >
-                      {copiedCommand === adapter.installCommand ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Copy className="w-4 h-4" />
-                      )}
-                    </Button>
+                  {/* View Details CTA */}
+                  <div className="text-sm text-violet-600 font-medium">
+                    Click to view details →
                   </div>
                 </CardContent>
               </Card>
+            </Link>
             ))
           )}
         </div>
@@ -499,10 +443,33 @@ export default function AdaptrixMarketplace() {
             </p>
           </div>
         )}
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-slate-600">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </section>
 
       {/* CLI Demo Section */}
-      <section className="container mx-auto px-4 py-12">
+      {/* <section className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
             Try the CLI Interface
@@ -513,7 +480,7 @@ export default function AdaptrixMarketplace() {
           </p>
         </div>
         <CLIDemo />
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="border-t bg-white/80 backdrop-blur-sm dark:bg-slate-900/80 mt-16">

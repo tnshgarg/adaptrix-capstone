@@ -175,6 +175,32 @@ class APIClient {
       method: 'DELETE',
     });
   }
+
+  async incrementDownload(adapterId: string) {
+    return await this.request(`/api/downloads/${adapterId}/download`, {
+      method: 'POST',
+    });
+  }
+
+  async getPlatformStats() {
+    return await this.request('/api/platform/stats');
+  }
+
+  async starAdapter(adapterId: string) {
+    return await this.request(`/api/stars/${adapterId}`, {
+      method: 'POST',
+    });
+  }
+
+  async unstarAdapter(adapterId: string) {
+    return await this.request(`/api/stars/${adapterId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async checkStar(adapterId: string) {
+    return await this.request(`/api/stars/check/${adapterId}`);
+  }
 }
 
 const apiClient = new APIClient();

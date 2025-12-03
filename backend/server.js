@@ -31,6 +31,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/adapters', require('./routes/adapters'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/downloads', require('./routes/downloads'));
+app.use('/api/platform', require('./routes/platform'));
+app.use('/api/stars', require('./routes/stars'));
 
 // Health check
 app.get('/health', (req, res) => {

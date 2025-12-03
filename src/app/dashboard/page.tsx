@@ -21,9 +21,9 @@ import Link from 'next/link'
 import apiClient from '@/lib/api'
 
 interface DashboardStats {
-  totalAdapters: number
-  totalDownloads: number
-  totalUsers: number
+  myAdapters: number
+  myDownloads: number
+  myStars: number
 }
 
 interface RecentAdapter {
@@ -39,9 +39,9 @@ export default function DashboardPage() {
   const { user, loading: authLoading, isAuthenticated } = useAuth()
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
-    totalAdapters: 0,
-    totalDownloads: 0,
-    totalUsers: 0
+    myAdapters: 0,
+    myDownloads: 0,
+    myStars: 0
   })
   const [recentAdapters, setRecentAdapters] = useState<RecentAdapter[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,14 +61,19 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
-      const data = await apiClient.getDashboardStats()
+      // Fetch user's adapters
+      const adaptersData = await apiClient.getAdapters({ authorId: user?.id })
+      
+      const myAdapters = adaptersData.adapters || []
+      const myDownloads = myAdapters.reduce((sum: number, a: any) => sum + a.downloads, 0)
+      const myStars = myAdapters.reduce((sum: number, a: any) => sum + a.starCount, 0)
       
       setStats({
-        totalAdapters: data.totalAdapters,
-        totalDownloads: data.totalDownloads,
-        totalUsers: data.totalUsers
+        myAdapters: myAdapters.length,
+        myDownloads,
+        myStars
       })
-      setRecentAdapters(data.recentAdapters || [])
+      setRecentAdapters(myAdapters.slice(0, 5))
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
     } finally {
@@ -130,16 +135,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Adapters</CardTitle>
+              <CardTitle className="text-sm font-medium">My Adapters</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalAdapters}</div>
+              <div className="text-2xl font-bold">{stats.myAdapters}</div>
               <p className="text-xs text-muted-foreground">
-                +0 from last month
+                Adapters you've created
               </p>
             </CardContent>
           </Card>
@@ -150,27 +155,25 @@ export default function DashboardPage() {
               <Download className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalDownloads.toLocaleString()}</div>
+              <div className="text-2xl font-bold">{stats.myDownloads.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
-                +0 from last month
+                Across all your adapters
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+            < CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Stars</CardTitle>
+              <Star className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              <div className="text-2xl font-bold">{stats.myStars.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">
-                Registered users
+                Community favorites
               </p>
             </CardContent>
           </Card>
-
-
         </div>
 
         {/* Quick Actions */}
