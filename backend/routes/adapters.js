@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Adapter = require('../models/Adapter');
-const AdapterVersion = require('../models/AdapterVersion');
+const Adapter = require('../models/Adapter');
 const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
@@ -146,13 +146,6 @@ router.post('/', authMiddleware, async (req, res) => {
       fileName,
       cloudinaryId,
       size
-    });
-
-
-    await AdapterVersion.create({
-      version,
-      adapterId: adapter._id,
-      changelog: 'Initial release'
     });
 
 

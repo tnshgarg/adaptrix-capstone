@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Adapter = require('../models/Adapter');
-const Download = require('../models/Download');
+
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
@@ -9,18 +9,22 @@ router.get('/stats', authMiddleware, async (req, res) => {
   try {
     const [
       totalAdapters,
-      totalDownloads,
+      downloadStats,
       totalUsers,
       recentAdapters
     ] = await Promise.all([
       Adapter.countDocuments(),
-      Download.countDocuments(),
+      Adapter.aggregate([
+        { $group: { _id: null, totalDownloads: { $sum: "$downloads" } } }
+      ]),
       User.countDocuments(),
       Adapter.find()
         .sort({ createdAt: -1 })
         .limit(5)
         .populate('author', 'id name username avatar')
     ]);
+
+    const totalDownloads = downloadStats[0]?.totalDownloads || 0;
 
     const formattedRecentAdapters = recentAdapters.map(adapter => ({
       ...adapter.toObject(),
