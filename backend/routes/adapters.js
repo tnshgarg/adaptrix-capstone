@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Adapter = require('../models/Adapter');
-const Adapter = require('../models/Adapter');
 const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
