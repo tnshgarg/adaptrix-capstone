@@ -42,99 +42,6 @@ interface LoRaAdapter {
   fileName?: string
 }
 
-const mockAdapters: LoRaAdapter[] = [
-  {
-    id: '1',
-    name: 'Code-Enhancer-Lora',
-    description: 'Enhances code generation capabilities with better syntax understanding and documentation generation',
-    author: 'TechCorp AI',
-    version: '1.2.0',
-    downloads: 15420,
-    stars: 423,
-    tags: ['coding', 'documentation', 'syntax'],
-    model: 'Llama 3.1',
-    size: '2.3GB',
-    lastUpdated: '2 hours ago',
-    installCommand: 'adaptrix install TechCorp-AI/Code-Enhancer-Lora',
-    category: 'Development'
-  },
-  {
-    id: '2',
-    name: 'Creative-Writer-Pro',
-    description: 'Specialized adapter for creative writing, storytelling, and content creation with enhanced narrative flow',
-    author: 'CreativeLabs',
-    version: '2.0.1',
-    downloads: 8930,
-    stars: 287,
-    tags: ['writing', 'creative', 'storytelling'],
-    model: 'Mistral 7B',
-    size: '1.8GB',
-    lastUpdated: '5 hours ago',
-    installCommand: 'adaptrix install CreativeLabs/Creative-Writer-Pro',
-    category: 'Content Creation'
-  },
-  {
-    id: '3',
-    name: 'Data-Scientist-Helper',
-    description: 'Optimized for data analysis, statistical modeling, and machine learning explanations',
-    author: 'DataAI Team',
-    version: '1.5.3',
-    downloads: 12100,
-    stars: 356,
-    tags: ['data-science', 'analytics', 'ml'],
-    model: 'Llama 3.1',
-    size: '3.1GB',
-    lastUpdated: '1 day ago',
-    installCommand: 'adaptrix install DataAI-Team/Data-Scientist-Helper',
-    category: 'Data Science'
-  },
-  {
-    id: '4',
-    name: 'Business-Strategy-Advisor',
-    description: 'Professional business analysis and strategic planning with market insights',
-    author: 'BizIntelligence',
-    version: '1.0.5',
-    downloads: 6780,
-    stars: 198,
-    tags: ['business', 'strategy', 'analysis'],
-    model: 'Gemma 2B',
-    size: '1.2GB',
-    lastUpdated: '3 days ago',
-    installCommand: 'adaptrix install BizIntelligence/Business-Strategy-Advisor',
-    category: 'Business'
-  },
-  {
-    id: '5',
-    name: 'Medical-Assistant-Lite',
-    description: 'Medical terminology and healthcare information processing for clinical applications',
-    author: 'HealthAI Solutions',
-    version: '2.1.0',
-    downloads: 9450,
-    stars: 412,
-    tags: ['medical', 'healthcare', 'clinical'],
-    model: 'Llama 3.1',
-    size: '2.7GB',
-    lastUpdated: '6 hours ago',
-    installCommand: 'adaptrix install HealthAI-Solutions/Medical-Assistant-Lite',
-    category: 'Healthcare'
-  },
-  {
-    id: '6',
-    name: 'Legal-Document-Analyzer',
-    description: 'Legal document analysis and contract review with jurisdiction awareness',
-    author: 'LegalTech Pro',
-    version: '1.3.2',
-    downloads: 5230,
-    stars: 167,
-    tags: ['legal', 'contracts', 'compliance'],
-    model: 'Mistral 7B',
-    size: '2.1GB',
-    lastUpdated: '2 days ago',
-    installCommand: 'adaptrix install LegalTech-Pro/Legal-Document-Analyzer',
-    category: 'Legal'
-  }
-]
-
 export default function AdaptrixMarketplace() {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
@@ -520,7 +427,7 @@ export default function AdaptrixMarketplace() {
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-slate-600 dark:text-slate-400">
-            © 2024 Adaptrix. Building the future of AI customization.
+            © 2025 Adaptrix. Building the future of AI customization.
           </div>
         </div>
       </footer>

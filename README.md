@@ -308,4 +308,4 @@ This project demonstrates:
 
 ---
 
-**College Capstone Project** | Built with Next.js, Express, MongoDB | 2024
+**NST Capstone Project** | Built with Next.js, Express, MongoDB | 2025
