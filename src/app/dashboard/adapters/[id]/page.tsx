@@ -81,10 +81,10 @@ export default function AdapterDetailsPage() {
     }
 
     try {
-      // Increment download count
+
       await apiClient.incrementDownload(adapter.id)
 
-      // Trigger file download
+
       const link = document.createElement('a')
       link.href = adapter.fileUrl
       link.download = adapter.fileName || `${adapter.slug}.safetensors`
@@ -98,7 +98,7 @@ export default function AdapterDetailsPage() {
         description: `${adapter.name} is being downloaded`
       })
 
-      // Update local adapter state
+
       setAdapter({
         ...adapter,
         downloads: adapter.downloads + 1
@@ -117,7 +117,7 @@ export default function AdapterDetailsPage() {
       const data = await apiClient.checkStar(id)
       setIsStarred(data.isStarred)
     } catch (error) {
-      // User might not be authenticated, ignore
+
     }
   }
 

@@ -61,7 +61,7 @@ class APIClient {
     }
   }
 
-  // Auth endpoints
+
   async register(name: string, email: string, password: string) {
     const data = await this.request('/api/auth/register', {
       method: 'POST',
@@ -92,7 +92,7 @@ class APIClient {
     this.removeToken();
   }
 
-  // Adapters endpoints
+
   async getAdapters(params: Record<string, any> = {}) {
     const queryString = new URLSearchParams(params).toString();
     return await this.request(`/api/adapters${queryString ? '?' + queryString : ''}`);
@@ -146,12 +146,12 @@ class APIClient {
     return data;
   }
 
-  // Dashboard endpoints
+
   async getDashboardStats() {
     return await this.request('/api/dashboard/stats');
   }
 
-  // Reviews endpoints
+
   async createReview(data: any) {
     return await this.request('/api/reviews', {
       method: 'POST',

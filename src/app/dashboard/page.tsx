@@ -61,7 +61,7 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
-      // Fetch user's adapters
+
       const adaptersData = await apiClient.getAdapters({ authorId: user?.id })
       
       const myAdapters = adaptersData.adapters || []

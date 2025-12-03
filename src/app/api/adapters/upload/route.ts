@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file type
+
     const allowedTypes = [
       'application/octet-stream',
       'application/x-safetensors',
@@ -38,8 +38,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (max 2GB)
-    const maxSize = 2 * 1024 * 1024 * 1024 // 2GB
+
+    const maxSize = 2 * 1024 * 1024 * 1024
     if (file.size > maxSize) {
       return NextResponse.json(
         { error: 'File too large. Maximum size is 2GB' },
@@ -47,20 +47,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create uploads directory if it doesn't exist
+
     const uploadsDir = join(process.cwd(), 'uploads', 'adapters')
     try {
       await mkdir(uploadsDir, { recursive: true })
     } catch (error) {
-      // Directory might already exist
+
     }
 
-    // Generate unique filename
+
     const uniqueId = uuidv4()
     const fileName = `${uniqueId}${fileExtension}`
     const filePath = join(uploadsDir, fileName)
 
-    // Save file
+
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     await writeFile(filePath, buffer)

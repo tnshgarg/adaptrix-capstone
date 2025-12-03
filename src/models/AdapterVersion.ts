@@ -23,7 +23,7 @@ const AdapterVersionSchema: Schema = new Schema({
   timestamps: { createdAt: true, updatedAt: false },
 });
 
-// Compound index for uniqueness
+
 AdapterVersionSchema.index({ adapterId: 1, version: 1 }, { unique: true });
 
 const AdapterVersion: Model<IAdapterVersion> = mongoose.models.AdapterVersion || mongoose.model<IAdapterVersion>('AdapterVersion', AdapterVersionSchema);

@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     if (!adapter) {
-      // Try slug
+
       adapter = await Adapter.findOne({ slug: id }).populate('author', 'id name username avatar');
     }
 

@@ -119,11 +119,11 @@ export async function POST(request: NextRequest) {
   try {
     const { command } = await request.json()
 
-    // Find the command in our predefined list
+
     const commandData = cliCommands.find(cmd => cmd.command === command)
     
     if (commandData) {
-      // Simulate typing delay
+
       await new Promise(resolve => setTimeout(resolve, 500))
       
       return NextResponse.json({
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Handle unknown commands
+
     if (command?.startsWith('adaptrix')) {
       return NextResponse.json({
         success: true,

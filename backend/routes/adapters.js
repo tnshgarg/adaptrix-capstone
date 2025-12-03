@@ -8,12 +8,12 @@ const path = require('path');
 const cloudinary = require('../config/cloudinary');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Configure Cloudinary storage for multer
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'adaptrix/adapters',
-    resource_type: 'raw', // Use 'raw' for binary files like .safetensors
+    resource_type: 'raw',
     public_id: (req, file) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       const ext = path.extname(file.originalname);
@@ -24,7 +24,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 * 1024 }, // 2GB
+  limits: { fileSize: 2 * 1024 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedExts = ['.safetensors', '.bin', '.pth', '.pt', '.ckpt'];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -36,14 +36,11 @@ const upload = multer({
   }
 });
 
-// @route   GET /api/adapters
-// @desc    Get all adapters with filtering
-// @access  Public
 router.get('/', async (req, res) => {
   try {
     const { search, category, sort = 'popular', page = 1, limit = 10, authorId } = req.query;
 
-    // Build query
+
     const query = {};
     if (search) {
       query.$or = [
@@ -59,7 +56,7 @@ router.get('/', async (req, res) => {
       query.authorId = authorId;
     }
 
-    // Build sort option
+
     let sortOption = { downloads: -1 };
     if (sort === 'stars') sortOption = { starCount: -1 };
     if (sort === 'recent') sortOption = { createdAt: -1 };
@@ -95,14 +92,11 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching adapters:', error);
+    
     res.status(500).json({ error: 'Failed to fetch adapters' });
   }
 });
 
-// @route   POST /api/adapters
-// @desc    Create new adapter
-// @access  Private
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const {
@@ -123,18 +117,18 @@ router.post('/', authMiddleware, async (req, res) => {
       size
     } = req.body;
 
-    // Validation
+
     if (!name || !slug || !description || !category) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Check for existing slug
+
     const existingAdapter = await Adapter.findOne({ slug });
     if (existingAdapter) {
       return res.status(400).json({ error: 'Adapter with this slug already exists' });
     }
 
-    // Create adapter
+
     const adapter = await Adapter.create({
       name,
       slug,
@@ -154,14 +148,14 @@ router.post('/', authMiddleware, async (req, res) => {
       size
     });
 
-    // Create initial version
+
     await AdapterVersion.create({
       version,
       adapterId: adapter._id,
       changelog: 'Initial release'
     });
 
-    // Fetch with author populated
+
     const populatedAdapter = await Adapter.findById(adapter._id)
       .populate('author', 'id name username avatar');
 
@@ -185,14 +179,11 @@ router.post('/', authMiddleware, async (req, res) => {
       adapter: formattedAdapter
     });
   } catch (error) {
-    console.error('Error creating adapter:', error);
+    
     res.status(500).json({ error: 'Failed to create adapter' });
   }
 });
 
-// @route   POST /api/adapters/upload
-// @desc    Upload adapter file to Cloudinary
-// @access  Private
 router.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -202,30 +193,27 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
     res.json({
       message: 'File uploaded successfully to cloud storage',
       fileName: req.file.originalname,
-      fileUrl: req.file.path, // Cloudinary URL
-      cloudinaryId: req.file.filename, // Cloudinary public ID
+      fileUrl: req.file.path,
+      cloudinaryId: req.file.filename,
       size: req.file.size
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
 
-// @route   GET /api/adapters/:id
-// @desc    Get single adapter
-// @access  Public
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
     let adapter;
-    // Try to find by ObjectId first
+
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
       adapter = await Adapter.findById(id).populate('author', 'id name username avatar');
     }
 
-    // If not found, try slug
+
     if (!adapter) {
       adapter = await Adapter.findOne({ slug: id }).populate('author', 'id name username avatar');
     }
@@ -248,14 +236,11 @@ router.get('/:id', async (req, res) => {
 
     res.json({ adapter: formattedAdapter });
   } catch (error) {
-    console.error('Error fetching adapter:', error);
+    
     res.status(500).json({ error: 'Failed to fetch adapter' });
   }
 });
 
-// @route   PUT /api/adapters/:id
-// @desc    Update adapter
-// @access  Private
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const adapter = await Adapter.findById(req.params.id);
@@ -264,7 +249,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Adapter not found' });
     }
 
-    // Check ownership
+
     if (adapter.authorId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: 'Not authorized' });
     }
@@ -289,14 +274,11 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
     res.json({ adapter: formattedAdapter });
   } catch (error) {
-    console.error('Error updating adapter:', error);
+    
     res.status(500).json({ error: 'Failed to update adapter' });
   }
 });
 
-// @route   DELETE /api/adapters/:id
-// @desc    Delete adapter
-// @access  Private
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const adapter = await Adapter.findById(req.params.id);
@@ -305,7 +287,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Adapter not found' });
     }
 
-    // Check ownership
+
     if (adapter.authorId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: 'Not authorized' });
     }
@@ -314,7 +296,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Adapter deleted successfully' });
   } catch (error) {
-    console.error('Error deleting adapter:', error);
+    
     res.status(500).json({ error: 'Failed to delete adapter' });
   }
 });

@@ -48,7 +48,7 @@ export function CLIDemo() {
       const data = await response.json()
       
       if (data.success) {
-        // Simulate typing effect
+
         const lines = data.output.split('\n')
         let currentOutput = ''
         

@@ -56,6 +56,8 @@ export default function AdaptersPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/signin')
@@ -92,7 +94,7 @@ export default function AdaptersPage() {
         title: "Success",
         description: "Adapter deleted successfully"
       })
-      fetchAdapters() // Refresh list
+      fetchAdapters()
     } catch (error) {
       toast({
         title: "Error",
@@ -112,6 +114,16 @@ export default function AdaptersPage() {
     
     return matchesSearch && matchesFilter
   })
+
+  const totalPages = Math.ceil(filteredAdapters.length / itemsPerPage)
+  const paginatedAdapters = filteredAdapters.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, filterStatus])
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -258,7 +270,7 @@ export default function AdaptersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAdapters.map((adapter) => (
+                  {paginatedAdapters.map((adapter) => (
                     <TableRow key={adapter.id}>
                       <TableCell>
                         <div>
@@ -319,6 +331,28 @@ export default function AdaptersPage() {
             )}
           </CardContent>
         </Card>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-gray-600">
+              Page {currentPage} of {totalPages} ({filteredAdapters.length} total)
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

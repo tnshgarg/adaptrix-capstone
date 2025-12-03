@@ -155,7 +155,7 @@ export default function AdaptrixMarketplace() {
   }, [selectedCategory, sortBy, currentPage]);
 
   useEffect(() => {
-    // Fetch platform stats
+
     const fetchStats = async () => {
       try {
         const stats = await apiClient.getPlatformStats();
@@ -205,7 +205,7 @@ export default function AdaptrixMarketplace() {
       return matchesSearch && matchesCategory
     })
 
-    // Sort adapters
+
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'popular':

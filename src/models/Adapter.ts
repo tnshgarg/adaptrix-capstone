@@ -47,7 +47,7 @@ const AdapterSchema: Schema = new Schema({
   toObject: { virtuals: true }
 });
 
-// Virtual for author to enable populate
+
 AdapterSchema.virtual('author', {
   ref: 'User',
   localField: 'authorId',

@@ -77,7 +77,7 @@ export function AdapterForm() {
   const handleInputChange = (field: keyof AdapterFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     
-    // Auto-generate slug from name
+
     if (field === 'name') {
       const slug = value
         .toLowerCase()
@@ -121,7 +121,7 @@ export function AdapterForm() {
     setUploadProgress(0)
 
     try {
-      // Simulate upload progress
+
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 90) {
@@ -137,7 +137,7 @@ export function AdapterForm() {
       clearInterval(progressInterval)
       setUploadProgress(100)
 
-      // Store uploaded file info
+
       setUploadedFile({
         fileName: data.fileName,
         fileUrl: data.fileUrl,
@@ -174,7 +174,7 @@ export function AdapterForm() {
     setIsLoading(true)
 
     try {
-      // Include uploaded file information
+
       const adapterData = {
         ...formData,
         fileUrl: uploadedFile?.fileUrl,

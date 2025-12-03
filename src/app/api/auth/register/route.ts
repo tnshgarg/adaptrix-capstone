@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    // Check if user already exists
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       name,
       email,
       password: hashedPassword,
-      username: email.split('@')[0], // Default username
+      username: email.split('@')[0],
     });
 
     return NextResponse.json({

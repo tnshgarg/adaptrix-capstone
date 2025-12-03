@@ -127,14 +127,14 @@ export async function POST(request: NextRequest) {
     })
 
 
-    // Create initial version
+
     await AdapterVersion.create({
       version: validatedData.version,
       adapterId: adapter._id,
       changelog: 'Initial release'
     })
 
-    // Fetch author separately
+
     const populatedAdapter = await Adapter.findById(adapter._id).populate('author', 'id name username avatar');
 
     const formattedAdapter = {
@@ -173,6 +173,6 @@ export async function POST(request: NextRequest) {
 }
 
 function getOrderBy(sort: string) {
-  // Deprecated, logic moved inside GET
+
   return {}
 }

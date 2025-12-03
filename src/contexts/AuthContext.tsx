@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is logged in on mount
+
     const checkAuth = async () => {
       const token = apiClient.getToken()
       if (token) {

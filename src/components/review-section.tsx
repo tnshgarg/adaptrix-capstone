@@ -108,7 +108,7 @@ export function ReviewSection({ adapterId }: ReviewSectionProps) {
     setRating(review.rating)
     setComment(review.comment)
     setEditingId(review._id)
-    // Scroll to form
+
     document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' })
   }
 

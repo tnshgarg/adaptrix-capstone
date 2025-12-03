@@ -5,9 +5,6 @@ const Download = require('../models/Download');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
-// @route   GET /api/dashboard/stats
-// @desc    Get dashboard statistics
-// @access  Private
 router.get('/stats', authMiddleware, async (req, res) => {
   try {
     const [
@@ -44,7 +41,7 @@ router.get('/stats', authMiddleware, async (req, res) => {
       recentAdapters: formattedRecentAdapters
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
+    
     res.status(500).json({ error: 'Failed to fetch stats' });
   }
 });
