@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
 import { Progress } from '@/components/ui/progress'
 import { Upload, X, Plus, Save } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
@@ -489,10 +488,12 @@ Specify the license..."
         </CardHeader>
         <CardContent>
           <div className="flex items-center space-x-2">
-            <Switch
+            <input
+              type="checkbox"
               id="isPublic"
               checked={formData.isPublic}
-              onCheckedChange={(checked) => handleInputChange('isPublic', checked)}
+              onChange={(e) => handleInputChange('isPublic', e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-600"
             />
             <Label htmlFor="isPublic">Make this adapter public</Label>
           </div>
